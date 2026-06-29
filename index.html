@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendário de Eventos – DAMAS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="cal-loading" id="cal-loading">
+  <div class="spinner"></div>
+  <span>Carregando eventos...</span>
+</div>
+
+<!-- HEADER -->
+<header class="cal-header">
+  <div class="cal-header-left">
+    <img src="brasao.png" alt="Brasão DAMAS" class="cal-logo-img">
+    <div>
+      <div class="cal-logo-name">Diretório Acadêmico de Medicina</div>
+      <div class="cal-logo-sub">DR. ALEXANDRE SALES · ASCES-UNITA</div>
+    </div>
+  </div>
+  <div>
+    <div class="cal-main-title">Congressos e Eventos Acadêmicos</div>
+    <div class="cal-main-sub">Planeje-se, participe e transforme sua jornada acadêmica.</div>
+  </div>
+  <div class="cal-nao-perca">
+    <div class="cal-nao-perca-icon">📅</div>
+    <div>
+      <div class="cal-nao-perca-title">Não perca!</div>
+      <div class="cal-nao-perca-sub">Confira os próximos eventos em destaque.</div>
+      <button class="cal-btn-proximos" onclick="irParaProximo()">Ver próximos eventos →</button>
+    </div>
+  </div>
+</header>
+
+<!-- FILTROS -->
+<div class="cal-filters-bar">
+  <div class="cal-search-wrap">
+    <span class="cal-search-icon">🔍</span>
+    <input class="cal-search" id="busca" type="text" placeholder="Buscar evento..." oninput="aplicarFiltros()">
+  </div>
+  <div class="cal-select-wrap">
+    <label>Tipo de evento</label>
+    <select id="filtro-cat" onchange="aplicarFiltros()">
+      <option value="">Todos</option>
+      <option value="Congresso">Congresso</option>
+      <option value="Simpósio">Simpósio</option>
+      <option value="Workshop">Workshop</option>
+      <option value="Jornada">Jornada</option>
+      <option value="Curso">Curso</option>
+      <option value="Palestra">Palestra</option>
+    </select>
+  </div>
+  <div class="cal-select-wrap">
+    <label>Organização</label>
+    <select id="filtro-org" onchange="aplicarFiltros()">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div class="cal-select-wrap">
+    <label>Status</label>
+    <select id="filtro-status" onchange="aplicarFiltros()">
+      <option value="">Todos</option>
+      <option value="Inscrições abertas">Inscrições abertas</option>
+      <option value="Vagas disponíveis">Vagas disponíveis</option>
+      <option value="Evento gratuito">Evento gratuito</option>
+    </select>
+  </div>
+  <button class="cal-btn-limpar" onclick="limparFiltros()">✕ Limpar filtros</button>
+</div>
+
+<!-- TOOLBAR -->
+<div class="cal-toolbar">
+  <div class="cal-view-toggle">
+    <button class="cal-toggle-btn active" id="btn-cal" onclick="setView('calendario')">📅 Calendário</button>
+    <button class="cal-toggle-btn" id="btn-lista" onclick="setView('lista')">≡ Lista</button>
+  </div>
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="mudarMes(-1)">‹</button>
+    <div class="cal-mes-label" id="mes-label">Carregando...</div>
+    <button class="cal-nav-btn" onclick="mudarMes(1)">›</button>
+  </div>
+  <div class="cal-legenda">
+    <div class="leg-item"><div class="leg-dot" style="background:#4F46E5"></div>Congresso</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#16A34A"></div>Workshop</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#4F46E5"></div>Simpósio</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#9333EA"></div>Jornada</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#EA580C"></div>Curso</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#E11D48"></div>Palestra</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="cal-main">
+
+  <!-- CALENDÁRIO -->
+  <div id="view-calendario">
+    <div class="cal-body">
+      <div class="cal-grid-wrap">
+        <div class="cal-weekdays">
+          <div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <div class="cal-side" id="cal-side">
+        <div class="cal-side-empty" id="side-empty">
+          <div class="cal-side-empty-icon">📅</div>
+          <p>Clique em um dia com eventos para ver os detalhes.</p>
+        </div>
+        <div id="side-content" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA -->
+  <div id="view-lista" style="display:none">
+    <div class="cal-lista" id="cal-lista"></div>
+  </div>
+
+</main>
+
+<!-- SEÇÃO INFERIOR: 3 PAINÉIS -->
+<section class="tres-paineis-section">
+  <div class="tres-paineis-titulo">Três níveis de visualização para facilitar seu planejamento</div>
+  <div class="tres-paineis-grid">
+
+    <!-- 1. MENSAL -->
+    <div class="painel">
+      <div class="painel-header">
+        <div class="painel-num">1. MENSAL</div>
+        <div class="painel-titulo">Visão do mês</div>
+        <div class="painel-desc">Veja todos os eventos do mês selecionado.</div>
+      </div>
+      <div class="painel-divider"></div>
+      <div class="mini-nav">
+        <button class="mini-nav-btn" onclick="mudarMesMini(-1)">‹</button>
+        <div class="mini-mes-label" id="mini-mes-label"></div>
+        <button class="mini-nav-btn" onclick="mudarMesMini(1)">›</button>
+      </div>
+      <div class="mini-cal-grid" id="mini-cal-grid"></div>
+      <div class="mini-footer">Clique em qualquer dia com eventos para ver mais detalhes.</div>
+    </div>
+
+    <!-- 2. SEMANAL -->
+    <div class="painel">
+      <div class="painel-header">
+        <div class="painel-num">2. SEMANAL</div>
+        <div class="painel-titulo">Resumo da semana</div>
+        <div class="painel-desc">Eventos da semana selecionada.</div>
+      </div>
+      <div class="painel-divider"></div>
+      <div class="semana-nav">
+        <button class="semana-nav-btn" onclick="mudarSemana(-1)">‹</button>
+        <div class="semana-label" id="semana-label"></div>
+        <button class="semana-nav-btn" onclick="mudarSemana(1)">›</button>
+      </div>
+      <div class="semana-lista" id="semana-lista"></div>
+      <div class="semana-footer">Clique em um dia para ver a agenda completa.</div>
+    </div>
+
+    <!-- 3. DIÁRIO -->
+    <div class="painel">
+      <div class="painel-header">
+        <div class="painel-num">3. DIÁRIO</div>
+        <div class="painel-titulo">Detalhes do dia</div>
+        <div class="painel-desc">Todos os detalhes do dia selecionado.</div>
+      </div>
+      <div class="painel-divider"></div>
+      <div class="diario-data-label" id="diario-label">📅</div>
+      <div id="diario-content"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RODAPÉ -->
+<footer class="cal-footer">
+  <div class="cal-footer-logo">DAMAS – Diretório Acadêmico de Medicina · ASCES-UNITA</div>
+  <div class="cal-footer-slogan">Juntos somos mais fortes! 🩺</div>
+</footer>
+
+<!-- MODAL -->
+<div class="cal-modal-overlay" id="modal-overlay" onclick="if(event.target===this)fecharModal()">
+  <div class="cal-modal">
+    <button class="cal-modal-close" onclick="fecharModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
