@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendário de Eventos – DAMAS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="cal-header">
+  <div class="cal-header-left">
+    <img src="https://raw.githubusercontent.com/Damas-med/calendario-damas/main/Bras%C3%A3o%20DA.png" alt="Brasão DAMAS" class="cal-logo-img"/>
+    <div>
+      <div class="cal-logo-name">Diretório Acadêmico de Medicina</div>
+      <div class="cal-logo-sub">Dr. Alexandre Sales · ASCES-UNITA</div>
+    </div>
+  </div>
+  <div class="cal-header-center">
+    <h1 class="cal-main-title">Congressos e Eventos Acadêmicos</h1>
+    <p class="cal-main-sub">Planeje-se, participe e transforme sua jornada acadêmica.</p>
+  </div>
+  <div class="cal-header-right">
+    <div class="cal-nao-perca">
+      <div class="cal-nao-perca-icon">🗓️</div>
+      <div>
+        <div class="cal-nao-perca-title">Não perca!</div>
+        <div class="cal-nao-perca-sub">Confira os próximos eventos em destaque.</div>
+        <button class="cal-btn-proximos" onclick="irParaProximo()">Ver próximos eventos →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTROS -->
+<div class="cal-filters-bar">
+  <div class="cal-search-wrap">
+    <span class="cal-search-icon">🔍</span>
+    <input type="text" id="busca" class="cal-search" placeholder="Buscar evento..." oninput="aplicarFiltros()"/>
+  </div>
+  <div class="cal-select-wrap">
+    <label>Tipo de evento</label>
+    <select id="filtro-cat" onchange="aplicarFiltros()">
+      <option value="">Todos</option>
+      <option>Congresso</option>
+      <option>Simpósio</option>
+      <option>Jornada</option>
+      <option>Workshop</option>
+      <option>Curso</option>
+      <option>Palestra</option>
+    </select>
+  </div>
+  <div class="cal-select-wrap">
+    <label>Organização</label>
+    <select id="filtro-org" onchange="aplicarFiltros()">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div class="cal-select-wrap">
+    <label>Status</label>
+    <select id="filtro-status" onchange="aplicarFiltros()">
+      <option value="">Todos</option>
+      <option>Inscrições abertas</option>
+      <option>Vagas disponíveis</option>
+      <option>Evento gratuito</option>
+      <option>Em breve</option>
+    </select>
+  </div>
+  <button class="cal-btn-limpar" onclick="limparFiltros()">✕ Limpar filtros</button>
+</div>
+
+<!-- TOGGLE VISUALIZAÇÃO + NAVEGAÇÃO MÊS + LEGENDA -->
+<div class="cal-toolbar">
+  <div class="cal-view-toggle">
+    <button class="cal-toggle-btn active" id="btn-cal" onclick="setView('calendario')">🗓️ Calendário</button>
+    <button class="cal-toggle-btn" id="btn-lista" onclick="setView('lista')">☰ Lista</button>
+  </div>
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="mudarMes(-1)">‹</button>
+    <span class="cal-mes-label" id="mes-label">Julho de 2026</span>
+    <button class="cal-nav-btn" onclick="mudarMes(1)">›</button>
+  </div>
+  <div class="cal-legenda">
+    <span class="leg-item"><span class="leg-dot" style="background:#4F46E5"></span>Congresso</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#16A34A"></span>Workshop</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#4F46E5"></span>Simpósio</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#9333EA"></span>Jornada</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#EA580C"></span>Curso</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#E11D48"></span>Palestra</span>
+  </div>
+</div>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<div class="cal-main" id="cal-main">
+
+  <!-- CALENDÁRIO + PAINEL LATERAL -->
+  <div class="cal-body" id="view-calendario">
+
+    <!-- Grade do calendário -->
+    <div class="cal-grid-wrap">
+      <div class="cal-weekdays">
+        <div>DOM</div><div>SEG</div><div>TER</div>
+        <div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- Painel lateral de detalhes -->
+    <div class="cal-side" id="cal-side">
+      <div class="cal-side-empty" id="side-empty">
+        <div class="cal-side-empty-icon">📅</div>
+        <p>Clique em um dia com eventos para ver os detalhes.</p>
+      </div>
+      <div id="side-content" style="display:none"></div>
+    </div>
+
+  </div>
+
+  <!-- LISTA -->
+  <div id="view-lista" style="display:none">
+    <div class="cal-lista" id="cal-lista"></div>
+  </div>
+
+</div>
+
+<!-- MODAL DE EVENTO -->
+<div class="cal-modal-overlay" id="modal-overlay" onclick="fecharModal()">
+  <div class="cal-modal" onclick="event.stopPropagation()">
+    <button class="cal-modal-close" onclick="fecharModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="cal-loading" id="cal-loading">
+  <div class="spinner"></div>
+  <p>Carregando eventos...</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
