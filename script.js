@@ -3,7 +3,7 @@
 //  Edite apenas as variáveis abaixo
 // ============================================
 
-const CONFIG = {
+const CONFIG = { 
   SHEET_ID:   "13riRjRO7DpZIfyOljLoIgknITe-zDLLxot0ikQxnV4o",
   SHEET_NAME: "Sheet1",
 };
