@@ -1,6 +1,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --verde: #1A3D2B; --verde-md: #2A5C40; --dourado: #C9A84C;
+  --verde: #072815; --verde-md: #072815; --dourado: #C9A84C;
   --fundo: #F5F3EE; --branco: #FFFFFF; --cinza1: #6B7280; --cinza2: #E5E7EB;
   --radius: 12px; --sombra: 0 2px 12px rgba(26,61,43,.10);
   --font: 'Inter', sans-serif; --font-d: 'Playfair Display', serif;
